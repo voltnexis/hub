@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoltNexis Hub - Community File Sharing</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="assets/logo.png" alt="VN HUB" class="brand-logo">
+                <span class="brand-text">VN HUB</span>
+            </div>
+            <div class="nav-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search files, discussions..." id="searchInput">
+            </div>
+            <div class="nav-actions">
+                <button class="btn-primary" id="createPostBtn">
+                    <i class="fas fa-plus"></i> Create Post
+                </button>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Categories</h3>
+                <div class="category-list">
+                    <div class="category-item active" data-category="all">
+                        <i class="fas fa-home"></i> All Posts
+                    </div>
+                    <div class="category-item" data-category="documents">
+                        <i class="fas fa-file-alt"></i> Documents
+                    </div>
+                    <div class="category-item" data-category="images">
+                        <i class="fas fa-image"></i> Images
+                    </div>
+                    <div class="category-item" data-category="videos">
+                        <i class="fas fa-video"></i> Videos
+                    </div>
+                    <div class="category-item" data-category="code">
+                        <i class="fas fa-code"></i> Code
+                    </div>
+                    <div class="category-item" data-category="other">
+                        <i class="fas fa-folder"></i> Other
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3>Trending Tags</h3>
+                <div class="tags-list">
+                    <span class="tag">#javascript</span>
+                    <span class="tag">#design</span>
+                    <span class="tag">#tutorial</span>
+                    <span class="tag">#opensource</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="feed-header">
+                <div class="sort-options">
+                    <button class="sort-btn active" data-sort="recent">Recent</button>
+                    <button class="sort-btn" data-sort="popular">Popular</button>
+                    <button class="sort-btn" data-sort="trending">Trending</button>
+                </div>
+            </div>
+            
+            <div id="postsContainer" class="posts-container"></div>
+        </main>
+
+        <aside class="right-sidebar">
+            <div class="widget">
+                <h3>Community Stats</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalPosts">0</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalComments">0</span>
+                        <span class="stat-label">Comments</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalRatings">0</span>
+                        <span class="stat-label">Ratings</span>
+                    </div>
+                </div>
+            </div>
+            <div class="widget">
+                <h3>Top Contributors</h3>
+                <div class="contributors">
+                    <div class="contributor">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Anonymous User</span>
+                        <span class="contribution">12 posts</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content create-modal">
+            <div class="modal-header">
+                <h2>Create New Post</h2>
+                <span class="close" id="closeCreate">&times;</span>
+            </div>
+            <form id="createForm" class="create-form">
+                <input type="text" id="postTitle" placeholder="Post title..." required>
+                <textarea id="postDescription" placeholder="Describe your post..." rows="4" required></textarea>
+                <div class="file-upload-area" id="fileUploadArea">
+                    <input type="file" id="fileInput" accept="*/*">
+                    <div class="upload-placeholder">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop files here or click to browse</p>
+                        <small>Optional: Add files to your post</small>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <input type="text" id="postTags" placeholder="Tags (comma separated)">
+                    <button type="submit" class="btn-primary">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Post Detail Modal -->
+    <div id="postModal" class="modal">
+        <div class="modal-content post-modal">
+            <span class="close" id="closePost">&times;</span>
+            <div id="postModalContent"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
