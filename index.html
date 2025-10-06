@@ -3,11 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoltNexis Hub - Community File Sharing</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com;">
+    
+    <!-- SEO Meta Tags -->
+    <title>VoltNexis Hub - Community File Sharing Platform</title>
+    <meta name="description" content="Join VoltNexis Hub - A modern community platform for sharing files, collaborating, and connecting with developers and creators worldwide. Share code, documents, images, and more with our vibrant community.">
+    <meta name="keywords" content="file sharing, community, collaboration, developers, creators, VoltNexis, hub, platform, code sharing, document sharing, developer community, open source, programming, tech community">
+    <meta name="author" content="VoltNexis">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="application-name" content="VoltNexis Hub">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="VoltNexis Hub - Community File Sharing Platform">
+    <meta property="og:description" content="Join VoltNexis Hub - A modern community platform for sharing files, collaborating, and connecting with developers and creators worldwide. Share code, documents, images, and more with our vibrant community.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://voltnexis.github.io/hub/">
+    <meta property="og:site_name" content="VoltNexis Hub">
+    <meta property="og:image" content="https://voltnexis.github.io/hub/assets/logo.webp">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="VoltNexis Hub - Community File Sharing Platform">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@VoltNexis">
+    <meta name="twitter:creator" content="@VoltNexis">
+    <meta name="twitter:title" content="VoltNexis Hub - Community File Sharing Platform">
+    <meta name="twitter:description" content="Join VoltNexis Hub - A modern community platform for sharing files, collaborating, and connecting with developers and creators worldwide.">
+    <meta name="twitter:image" content="https://voltnexis.github.io/hub/assets/logo.webp">
+    <meta name="twitter:image:alt" content="VoltNexis Hub - Community File Sharing Platform">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-TileColor" content="#0a0e27">
+    <meta name="msapplication-config" content="browserconfig.xml">
+
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png" />
+    <link rel="manifest" href="/site.webmanifest">
+
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-cdn.js"></script>
+    
 </head>
 <body>
+    
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
@@ -15,19 +65,35 @@
                 <span class="brand-text">VN HUB</span>
             </div>
             <div class="nav-search">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search files, discussions..." id="searchInput">
+                
+                <input type="text" placeholder="Search posts, files... Use @username for users" id="searchInput">
             </div>
             <div class="nav-actions">
-                <button class="btn-primary" id="createPostBtn">
-                    <i class="fas fa-plus"></i> Create Post
+                <button class="btn-primary mobile-icon-btn" id="createPostBtn">
+                    <i class="fas fa-plus"></i> <span class="btn-text">Create Post</span>
                 </button>
-                <div class="user-avatar">
+                <button class="btn-secondary mobile-icon-btn" id="signInBtn">
+                    <i class="fas fa-sign-in-alt"></i> <span class="btn-text">Sign In</span>
+                </button>
+                <div class="user-avatar" onclick="window.location.href='profile.html'" style="display: none;" id="userAvatar">
                     <i class="fas fa-user"></i>
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Search Bar -->
+    <div class="mobile-search-bar">
+        <div class="mobile-search-container">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search posts... Use @username for users" id="mobileSearchInput">
+            </div>
+            <button class="filter-btn" id="mobileFilterBtn">
+                <i class="fas fa-filter"></i>
+            </button>
+        </div>
+    </div>
 
     <div class="main-layout">
         <aside class="sidebar">
@@ -142,6 +208,110 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- User Profile Modal -->
+    <div id="userProfileModal" class="modal">
+        <div class="modal-content user-profile-modal">
+            <span class="close" id="closeUserProfile">&times;</span>
+            <div id="userProfileContent"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Search Modal -->
+    <div id="mobileSearchModal" class="modal mobile-modal">
+        <div class="modal-content mobile-search-content">
+            <div class="mobile-search-header">
+                <input type="text" id="mobileSearchInput" placeholder="Search posts... Use @username for users" autofocus>
+                <button class="close" id="closeMobileSearch">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Filter Modal -->
+    <div id="mobileFilterModal" class="modal mobile-modal">
+        <div class="modal-content mobile-filter-content">
+            <div class="modal-header">
+                <h3>Filters & Categories</h3>
+                <span class="close" id="closeMobileFilter">&times;</span>
+            </div>
+            <div class="mobile-filter-body">
+                <div class="filter-section">
+                    <h4>Sort By</h4>
+                    <div class="mobile-sort-options">
+                        <button class="mobile-sort-btn active" data-sort="recent">Recent</button>
+                        <button class="mobile-sort-btn" data-sort="popular">Popular</button>
+                        <button class="mobile-sort-btn" data-sort="trending">Trending</button>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h4>Categories</h4>
+                    <div class="mobile-category-list">
+                        <button class="mobile-category-btn active" data-category="all">
+                            <i class="fas fa-home"></i> All Posts
+                        </button>
+                        <button class="mobile-category-btn" data-category="documents">
+                            <i class="fas fa-file-alt"></i> Documents
+                        </button>
+                        <button class="mobile-category-btn" data-category="images">
+                            <i class="fas fa-image"></i> Images
+                        </button>
+                        <button class="mobile-category-btn" data-category="videos">
+                            <i class="fas fa-video"></i> Videos
+                        </button>
+                        <button class="mobile-category-btn" data-category="code">
+                            <i class="fas fa-code"></i> Code
+                        </button>
+                        <button class="mobile-category-btn" data-category="other">
+                            <i class="fas fa-folder"></i> Other
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign In Modal -->
+    <div id="signInModal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h2>Sign In</h2>
+                <span class="close" id="closeSignIn">&times;</span>
+            </div>
+            <form id="signInForm" class="auth-form">
+                <input type="text" id="signInEmailUsername" placeholder="Email or Username" required>
+                <input type="password" id="signInPassword" placeholder="Password" required>
+                <div class="auth-buttons">
+                    <button type="submit" class="btn-primary-auth">Sign In</button>
+                </div>
+                <p class="auth-switch">Don't have an account? <a href="#" id="switchToSignUp">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signUpModal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <span class="close" id="closeSignUp">&times;</span>
+            </div>
+            <form id="signUpForm" class="auth-form">
+                <input type="text" id="signUpName" placeholder="Display Name" required>
+                <input type="text" id="signUpUsername" placeholder="Username" required>
+                <input type="email" id="signUpEmail" placeholder="Email" required>
+                <input type="password" id="signUpPassword" placeholder="Password" required>
+                <input type="password" id="signUpConfirmPassword" placeholder="Confirm Password" required>
+                <input type="date" id="signUpDob" required>
+                <div class="auth-buttons">
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </div>
+                <p class="auth-switch">Already have an account? <a href="#" id="switchToSignIn">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Alert Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="script-supabase-complete.js"></script>
 </body>
 </html>

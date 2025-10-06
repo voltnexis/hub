@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - VoltNexis Hub</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png" />
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-cdn.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="assets/logo.png" alt="VN HUB" class="brand-logo">
+                <span class="brand-text">VN HUB</span>
+            </div>
+            <div class="nav-actions">
+                <button class="btn-secondary" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <div class="profile-nav">
+                <div class="nav-item active" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </div>
+                <div class="nav-item" data-section="posts">
+                    <i class="fas fa-file-alt"></i>
+                    <span class="nav-text">Posts</span>
+                </div>
+                <div class="nav-item" data-section="library">
+                    <i class="fas fa-folder"></i>
+                    <span class="nav-text">Library</span>
+                </div>
+                <div class="nav-item" data-section="saved">
+                    <i class="fas fa-bookmark"></i>
+                    <span class="nav-text">Saved</span>
+                </div>
+                <div class="nav-item danger" data-section="danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="nav-text">Danger</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <!-- Profile Settings Section -->
+            <div id="settings" class="profile-section active">
+                <h2>Profile Settings</h2>
+                <div class="settings-form">
+                    <div class="profile-picture-section">
+                        <div class="current-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="avatar-controls">
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                            <button class="btn-primary" onclick="document.getElementById('avatarInput').click()">
+                                <i class="fas fa-camera"></i> Upload Picture
+                            </button>
+                            <button class="btn-secondary" id="removeAvatar">Remove</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Display Name</label>
+                        <input type="text" id="displayName" value="Anonymous User">
+                    </div>
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="userBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="userEmail" placeholder="your@email.com" disabled>
+                    </div>
+                    <button class="btn-primary" id="saveSettings">Save Changes</button>
+                    <button class="btn-danger" id="signOutBtn" style="display: none;">Sign Out</button>
+                </div>
+            </div>
+
+            <!-- My Posts Section -->
+            <div id="posts" class="profile-section">
+                <h2>My Posts</h2>
+                <div class="posts-stats">
+                    <span class="stat">Total Posts: <strong id="userPostCount">0</strong></span>
+                    <span class="stat">Total Views: <strong id="userViewCount">0</strong></span>
+                </div>
+                <div id="userPostsList" class="user-posts-list">
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <p>You haven't created any posts yet</p>
+                        <button class="btn-primary" onclick="window.location.href='index.html'">Create Your First Post</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Library Section -->
+            <div id="library" class="profile-section">
+                <h2>My Library</h2>
+                <div class="library-stats">
+                    <span class="stat">Total Files: <strong id="userFileCount">0</strong></span>
+                </div>
+                <div id="userLibraryList" class="library-list">
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No files in your library yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saved Posts Section -->
+            <div id="saved" class="profile-section">
+                <h2>Saved Posts</h2>
+                <div id="savedPostsList" class="saved-posts-list">
+                    <div class="empty-state">
+                        <i class="fas fa-bookmark"></i>
+                        <p>No saved posts yet</p>
+                        <p class="empty-subtitle">Save posts by clicking the bookmark icon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone Section -->
+            <div id="danger" class="profile-section">
+                <h2>Danger Zone</h2>
+                <div class="danger-actions">
+                    <div class="danger-item">
+                        <div class="danger-info">
+                            <h3>Change Username</h3>
+                            <p>Update your username. This action cannot be undone.</p>
+                        </div>
+                        <button class="btn-warning" id="changeUsername">Change Username</button>
+                    </div>
+                    <div class="danger-item">
+                        <div class="danger-info">
+                            <h3>Deactivate Account</h3>
+                            <p>Temporarily disable your account. You can reactivate it later.</p>
+                        </div>
+                        <button class="btn-warning" id="deactivateAccount">Deactivate</button>
+                    </div>
+                    <div class="danger-item">
+                        <div class="danger-info">
+                            <h3>Make Email Visible</h3>
+                            <p>Allow other users to see your email address in your public profile.</p>
+                        </div>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="emailVisible" class="toggle-checkbox">
+                            <span class="toggle-slider"></span>
+                            
+                        </label>
+                    </div>
+                    <div class="danger-item">
+                        <div class="danger-info">
+                            <h3>Delete Account</h3>
+                            <p>Permanently delete your account and all associated data. This cannot be undone.</p>
+                        </div>
+                        <button class="btn-danger" id="deleteAccount">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="profile.js"></script>
+</body>
+</html>
