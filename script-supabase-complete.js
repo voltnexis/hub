@@ -376,7 +376,10 @@ class VNHub {
                     ${post.pinned ? '<i class="fas fa-thumbtack pin-icon"></i>' : ''}
                     ${post.title}
                 </div>
-                <div class="post-description">${this.parseMentions(post.description)}</div>
+                <div class="post-description">
+                    ${this.parseMentions(post.description.length > 150 ? post.description.substring(0, 150) + '...' : post.description)}
+                </div>
+                ${post.description.length > 150 ? '<div class="description-toggle" onclick="event.stopPropagation(); const desc = this.previousElementSibling; desc.innerHTML = \`' + this.parseMentions(post.description).replace(/`/g, '\\`') + '\`; this.style.display = \'none\';">...more</div>' : ''}
                 
                 ${post.file_url ? this.renderFilePreview({
                     name: post.file_name,
@@ -388,7 +391,7 @@ class VNHub {
                 <div class="post-actions">
                     <button class="action-btn">
                         <i class="fas fa-star"></i>
-                        ${post.average_rating?.toFixed(1) || '0.0'} (${post.ratings?.length || 0})
+                        ${(post.ratings && post.ratings.length > 0 ? (post.ratings.reduce((sum, r) => sum + r.rating, 0) / post.ratings.length).toFixed(1) : '0.0')} (${post.ratings?.length || 0})
                     </button>
                     <button class="action-btn">
                         <i class="fas fa-comment"></i>
@@ -506,7 +509,10 @@ class VNHub {
                 </div>
                 
                 <div class="post-title">${post.title}</div>
-                <div class="post-description">${this.parseMentions(post.description)}</div>
+                <div class="post-description">
+                    ${this.parseMentions(post.description.length > 150 ? post.description.substring(0, 150) + '...' : post.description)}
+                </div>
+                ${post.description.length > 150 ? '<div class="description-toggle" onclick="event.stopPropagation(); const desc = this.previousElementSibling; desc.innerHTML = \`' + this.parseMentions(post.description).replace(/`/g, '\\`') + '\`; this.style.display = \'none\';">...more</div>' : ''}
                 
                 ${post.file_url ? this.renderFilePreview({
                     name: post.file_name,
@@ -518,7 +524,7 @@ class VNHub {
                 <div class="post-actions">
                     <button class="action-btn">
                         <i class="fas fa-star"></i>
-                        ${post.average_rating?.toFixed(1) || '0.0'} (${post.ratings?.length || 0})
+                        ${(post.ratings && post.ratings.length > 0 ? (post.ratings.reduce((sum, r) => sum + r.rating, 0) / post.ratings.length).toFixed(1) : '0.0')} (${post.ratings?.length || 0})
                     </button>
                     <button class="action-btn">
                         <i class="fas fa-comment"></i>
@@ -579,8 +585,8 @@ class VNHub {
                         ${[1,2,3,4,5].map(i => `<button class="star-btn" data-rating="${i}"><i class="far fa-star"></i></button>`).join('')}
                     </div>
                     <div class="rating-display">
-                        <span class="rating-stars">${this.renderStars(post.average_rating || 0)}</span>
-                        <span>${(post.average_rating || 0).toFixed(1)} (${post.ratings?.length || 0} ratings)</span>
+                        <span class="rating-stars">${this.renderStars(post.ratings && post.ratings.length > 0 ? post.ratings.reduce((sum, r) => sum + r.rating, 0) / post.ratings.length : 0)}</span>
+                        <span>${(post.ratings && post.ratings.length > 0 ? (post.ratings.reduce((sum, r) => sum + r.rating, 0) / post.ratings.length).toFixed(1) : '0.0')} (${post.ratings?.length || 0} ratings)</span>
                     </div>
                 </div>
                 
@@ -903,7 +909,7 @@ class VNHub {
         if (type.startsWith('image/')) {
             return `
                 <div class="file-preview image-preview">
-                    <img src="${file.data}" alt="${file.name}" style="max-width: 100%; border-radius: 8px;">
+                    <img src="${file.data}" alt="${file.name}">
                     <div class="file-info">
                         <div class="file-name">${file.name}</div>
                         <div class="file-size">${file.size}</div>
@@ -915,7 +921,7 @@ class VNHub {
         if (type.startsWith('video/')) {
             return `
                 <div class="file-preview video-preview">
-                    <video controls preload="none" style="max-width: 100%;">
+                    <video controls preload="none">
                         <source src="${file.data}" type="${type}">
                     </video>
                     <div class="file-info">
@@ -1038,6 +1044,9 @@ class VNHub {
     }
 
     parseMentions(text) {
+        // Parse URLs first
+        text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color: #00d4ff; text-decoration: underline;" onclick="event.stopPropagation();">$1</a>');
+        // Then parse mentions
         return text.replace(/@([a-zA-Z0-9_]+)/g, '<span class="mention" data-username="$1" style="color: #00d4ff; cursor: pointer;">@$1</span>');
     }
 

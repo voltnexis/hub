@@ -145,6 +145,23 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Load user data
     await loadUserData();
+    
+    // Bio character counter
+    const bioTextarea = document.getElementById('userBio');
+    const bioCharCount = document.getElementById('bioCharCount');
+    
+    bioTextarea.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        bioCharCount.textContent = `(${currentLength}/100)`;
+        
+        if (currentLength >= 90) {
+            bioCharCount.style.color = '#ef4444';
+        } else if (currentLength >= 70) {
+            bioCharCount.style.color = '#f59e0b';
+        } else {
+            bioCharCount.style.color = '#8b949e';
+        }
+    });
 
     // Sign out functionality
     document.getElementById('signOutBtn').addEventListener('click', async () => {
@@ -195,7 +212,14 @@ async function loadUserData() {
     
     if (profile) {
         document.getElementById('displayName').value = profile.display_name || '';
-        document.getElementById('userBio').value = profile.bio || '';
+        const bioField = document.getElementById('userBio');
+        bioField.value = profile.bio || '';
+        
+        // Update bio character count
+        const bioCharCount = document.getElementById('bioCharCount');
+        const currentLength = bioField.value.length;
+        bioCharCount.textContent = `(${currentLength}/100)`;
+        
         document.getElementById('userEmail').value = currentUser.email || '';
         document.getElementById('emailVisible').checked = profile.email_visible || false;
         
